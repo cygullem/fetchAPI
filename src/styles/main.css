@@ -6,6 +6,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Rubik', sans-serif;
 }
 
 body{
@@ -14,8 +15,12 @@ body{
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: #D4D5D6;
 }
 
 h1, p{
     color: #000000;
+}
+.gridContainer{
+    max-height: 80vh;
 }

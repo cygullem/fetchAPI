@@ -114,7 +114,6 @@ function App() {
 
     return (
         <>
-            {/*---------------- Add Client Modal ----------------*/}
             <Modal show={showAddModal} onHide={makeAddModalAppear}>
                 <Modal.Header closeButton className='text-black font-semibold'>New Client</Modal.Header>
                 <Modal.Body>
@@ -138,7 +137,6 @@ function App() {
                 </Modal.Footer>
             </Modal>
 
-            {/*---------------- Update Client Modal ----------------*/}
             <Modal show={showUpdateModal} onHide={() => setShowUpdateModal(false)}>
                 <Modal.Header closeButton className='text-black font-semibold'>Update Client Information</Modal.Header>
                 <Modal.Body>

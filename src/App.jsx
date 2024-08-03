@@ -87,18 +87,22 @@ function App() {
     }
 
     const deleteClient = async (id) => {
-        try {
-            const response = await fetch(`http://localhost:5241/api/ClientApi/deleteclient?Id=${id}`, {
-                method: "DELETE",
-            });
-            if (response.ok) {
-                await getClients();
-                toast.success('Client deleted successfully!');
-            } else {
-                toast.error('Failed to delete client.');
+        if (confirm("U sure to delete this?") == true) {
+            try {
+                const response = await fetch(`http://localhost:5241/api/ClientApi/deleteclient?Id=${id}`, {
+                    method: "DELETE",
+                });
+                if (response.ok) {
+                    await getClients();
+                    toast.success('Client deleted successfully!');
+                } else {
+                    toast.error('Failed to delete client.');
+                }
+            } catch (error) {
+                console.error("Error deleting client:", error);
             }
-        } catch (error) {
-            console.error("Error deleting client:", error);
+        } else {
+            return;
         }
     };
 

@@ -15,12 +15,12 @@ body{
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #D4D5D6;
 }
 
 h1, p{
     color: #000000;
 }
-.gridContainer{
-    max-height: 80vh;
+
+.tableCont{
+    height: 10vh;
 }

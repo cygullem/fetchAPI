@@ -1,5 +1,5 @@
 import './styles/main.css';
-import { Toaster, toast } from 'sonner'
+import { Toaster, toast } from 'sonner';
 import React, { useState, useEffect } from "react";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
@@ -19,7 +19,7 @@ function App() {
     const makeAddModalAppear = () => setShowAddModal(!showAddModal);
     const makeUpdateModalAppear = () => setShowUpdateModal(!showUpdateModal);
 
-    
+
     const getClients = async () => {
         try {
             const response = await fetch("http://localhost:5241/api/ClientApi/GetClients");

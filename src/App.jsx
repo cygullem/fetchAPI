@@ -11,19 +11,15 @@ function App() {
     const [showAddModal, setShowAddModal] = useState(false);
     const [clientName, setClientName] = useState("");
     const [residency, setResidency] = useState("");
-
-    const [selectedClient, setSelectedClient] = useState(null);
+    
+    const [selectedClientId, setSelectedClientId] = useState(0);
+    const [selectedClient, setSelectedClient] = useState({id: 0, clientName : "", residency : ""})
     const [showUpdateModal, setShowUpdateModal] = useState(false);
 
     const makeAddModalAppear = () => setShowAddModal(!showAddModal);
+    const makeUpdateModalAppear = () => setShowUpdateModal(!showUpdateModal);
 
-    const makeUpdateModalAppear = (client) => {
-        setShowUpdateModal(!showUpdateModal);
-        setSelectedClient(client);
-        setClientName(client.clientName);
-        setResidency(client.residency);
-    };
-
+    
     const getClients = async () => {
         try {
             const response = await fetch("http://localhost:5241/api/ClientApi/GetClients");
@@ -34,6 +30,15 @@ function App() {
             console.error("Error fetching clients:", error);
         }
     };
+
+    const getClient = async (id) => {
+        const response = await fetch(
+            "http://localhost:5241/api/ClientApi/GetClient?id="+id
+        );
+        const result = await response.json()
+        setSelectedClient(result)
+        makeUpdateModalAppear();
+    }
 
     const saveClient = async () => {
         const dataToSend = {
@@ -61,25 +66,25 @@ function App() {
     };
 
     const updateClient = async () => {
-        const dataToUpdate = {
-            clientId: selectedClient.id,
-            clientName,
-            residency,
-        };
-        try {
-            const response = await fetch("http://localhost:5241/api/ClientApi/updateclient", {
+       
+        const response = await fetch(
+            "http://localhost:5241/api/ClientApi/updateclient?id="+selectedClientId,
+            {
                 method: "PUT",
                 headers: {
-                    "Content-Type": "application/json",
+                    "Content-Type": "application/json"
                 },
-                body: JSON.stringify(dataToUpdate),
-            });
-            await getClients();
-            setShowUpdateModal(false);
-        } catch (error) {
-            console.error("Error updating client:", error);
+                body: JSON.stringify(selectedClient)
+            }
+        );
+        if (response.ok) {
+            toast.success('Client updated successfully!');
+        } else {
+            toast.error('Failed to update client.');
         }
-    };
+        getClients();
+        makeUpdateModalAppear();
+    }
 
     const deleteClient = async (id) => {
         try {
@@ -137,15 +142,15 @@ function App() {
                         className="w-full p-2 border-2 rounded-lg border-info text-black placeholder:text-black bg-transparent" 
                         placeholder='Client Name' 
                         type='text' 
-                        value={clientName} 
-                        onChange={(e) => setClientName(e.target.value)}
+                        value={selectedClient.clientName} 
+                        onChange={(e) => setSelectedClient((c)=>({...c, clientName : e.target.value}))}
                     />
                     <input 
                         className="w-full p-2 mt-2 border-2 rounded-lg border-info text-black placeholder:text-black bg-transparent" 
                         placeholder='Residency' 
                         type='text' 
-                        value={residency} 
-                        onChange={(e) => setResidency(e.target.value)}
+                        value={selectedClient.residency} 
+                        onChange={(e) => setSelectedClient((c)=>({...c, residency : e.target.value}))}
                     />
                 </Modal.Body>
                 <Modal.Footer>
@@ -179,7 +184,7 @@ function App() {
                                     <td className="text-center text-gray-400">{c.clientName}</td>
                                     <td className="text-center">{c.residency}</td>
                                     <td className="flex h-full p-3 gap-2 items-center justify-center">
-                                        <button className="btn btn-warning active:scale-50" onClick={() => makeUpdateModalAppear(c)}><i className="fa-solid fa-user-pen text-white"></i></button>
+                                        <button className="btn btn-warning active:scale-50" onClick={()=> {getClient(c.id); setSelectedClientId(c.id)}}><i className="fa-solid fa-user-pen text-white"></i></button>
                                         <button className="btn btn-danger active:scale-50" onClick={() => deleteClient(c.id)}><i className="fa-solid fa-trash-can text-white"></i></button>
                                     </td>
                                 </tr>

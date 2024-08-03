@@ -1,58 +1,107 @@
-import './styles/main.css'
+import './styles/main.css';
+import { Toaster, toast } from 'sonner'
 import React, { useState, useEffect } from "react";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
 function App() {
-    const [client, setClients] = useState([]);
+    const [clients, setClients] = useState([]);
     const [loading, setLoading] = useState(true);
+
     const [showAddModal, setShowAddModal] = useState(false);
     const [clientName, setClientName] = useState("");
     const [residency, setResidency] = useState("");
 
+    const [selectedClient, setSelectedClient] = useState(null);
+    const [showUpdateModal, setShowUpdateModal] = useState(false);
+
     const makeAddModalAppear = () => setShowAddModal(!showAddModal);
 
+    const makeUpdateModalAppear = (client) => {
+        setShowUpdateModal(!showUpdateModal);
+        setSelectedClient(client);
+        setClientName(client.clientName);
+        setResidency(client.residency);
+    };
+
     const getClients = async () => {
-        const response = await fetch("http://localhost:5241/api/ClientApi/GetClients");
-        const result = await response.json();
-        setClients(result);
-        setLoading(false);
-    }
+        try {
+            const response = await fetch("http://localhost:5241/api/ClientApi/GetClients");
+            const result = await response.json();
+            setClients(result);
+            setLoading(false);
+        } catch (error) {
+            console.error("Error fetching clients:", error);
+        }
+    };
 
     const saveClient = async () => {
         const dataToSend = {
-            "clientName": clientName,
-            "residency": residency,
-        }
-        const response = await fetch(
-            "http://localhost:5241/api/ClientApi/saveclient",
-            {
+            clientName,
+            residency,
+        };
+        try {
+            const response = await fetch("http://localhost:5241/api/ClientApi/saveclient", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
                 },
-                body: JSON.stringify(dataToSend)
+                body: JSON.stringify(dataToSend),
+            });
+            if (response.ok) {
+                await getClients();
+                makeAddModalAppear();
+                toast.success('Client saved successfully!');
+            } else {
+                toast.error('Failed to save client.');
             }
-        );
-        getClients();
-        makeAddModalAppear();
-    }
+        } catch (error) {
+            console.error("Error saving client:", error);
+        }
+    };
 
-    const DeleteClient = async (id) => {
-        const response = await fetch(
-            "http://localhost:5241/api/ClientApi/deleteclient?Id="+id,
-            {
+    const updateClient = async () => {
+        const dataToUpdate = {
+            clientId: selectedClient.id,
+            clientName,
+            residency,
+        };
+        try {
+            const response = await fetch("http://localhost:5241/api/ClientApi/updateclient", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(dataToUpdate),
+            });
+            await getClients();
+            setShowUpdateModal(false);
+        } catch (error) {
+            console.error("Error updating client:", error);
+        }
+    };
+
+    const deleteClient = async (id) => {
+        try {
+            const response = await fetch(`http://localhost:5241/api/ClientApi/deleteclient?Id=${id}`, {
                 method: "DELETE",
+            });
+            if (response.ok) {
+                await getClients();
+                toast.success('Client deleted successfully!');
+            } else {
+                toast.error('Failed to delete client.');
             }
-        );
-        getClients();
-    }
+        } catch (error) {
+            console.error("Error deleting client:", error);
+        }
+    };
 
     useEffect(() => {
         getClients();
     }, []);
 
-    if (loading) return <center><h1 className="text-3xl font-semibold">Loading...</h1></center>
+    if (loading) return <center><h1 className="text-3xl font-semibold">Loading...</h1></center>;
 
     return (
         <>
@@ -60,18 +109,54 @@ function App() {
             <Modal show={showAddModal} onHide={makeAddModalAppear}>
                 <Modal.Header closeButton className='text-black font-semibold'>New Client</Modal.Header>
                 <Modal.Body>
-                    <input className="w-full p-2 border-2 rounded-lg border-info text-black placeholder:text-black bg-transparent" placeholder="Client Name" type="text" value={clientName} onChange={(e) => setClientName(e.target.value)}/>
-                    <input className="w-full p-2 mt-2 border-2 rounded-lg border-info text-black placeholder:text-black bg-transparent" placeholder="Residency" type="text" value={residency} onChange={(e) => setResidency(e.target.value)}/>
+                    <input 
+                        className="w-full p-2 border-2 rounded-lg border-info text-black placeholder:text-black bg-transparent" 
+                        placeholder="Client Name" 
+                        type="text" 
+                        value={clientName} 
+                        onChange={(e) => setClientName(e.target.value)}
+                    />
+                    <input 
+                        className="w-full p-2 mt-2 border-2 rounded-lg border-info text-black placeholder:text-black bg-transparent" 
+                        placeholder="Residency" 
+                        type="text" 
+                        value={residency} 
+                        onChange={(e) => setResidency(e.target.value)}
+                    />
                 </Modal.Body>
                 <Modal.Footer>
                     <Button className='active:scale-50 btn btn-success' onClick={saveClient}>Save client</Button>
                 </Modal.Footer>
             </Modal>
 
+            {/*---------------- Update Client Modal ----------------*/}
+            <Modal show={showUpdateModal} onHide={() => setShowUpdateModal(false)}>
+                <Modal.Header closeButton className='text-black font-semibold'>Update Client Information</Modal.Header>
+                <Modal.Body>
+                    <input 
+                        className="w-full p-2 border-2 rounded-lg border-info text-black placeholder:text-black bg-transparent" 
+                        placeholder='Client Name' 
+                        type='text' 
+                        value={clientName} 
+                        onChange={(e) => setClientName(e.target.value)}
+                    />
+                    <input 
+                        className="w-full p-2 mt-2 border-2 rounded-lg border-info text-black placeholder:text-black bg-transparent" 
+                        placeholder='Residency' 
+                        type='text' 
+                        value={residency} 
+                        onChange={(e) => setResidency(e.target.value)}
+                    />
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button className='active:scale-50 btn btn-success' onClick={updateClient}>Save Update</Button>
+                </Modal.Footer>
+            </Modal>
+
             <h1 className="text-5xl font-semibold mb-4 w-full text-center">CLIENTS</h1>
             <div className="w-full mb-4 flex justify-end">
                 <button className="btn btn-warning active:scale-50" onClick={makeAddModalAppear}>
-                    <i class="fa-solid fa-user-plus mr-2"></i>
+                    <i className="fa-solid fa-user-plus mr-2"></i>
                     Add Client
                 </button>
             </div>
@@ -88,14 +173,14 @@ function App() {
                     </thead>
                     <tbody>
                         {
-                            client.map((c) =>
+                            clients.map((c) =>
                                 <tr key={c.id} className="text-xl font-semibold hover:bg-slate-600">
                                     <td className="text-center">{c.id}</td>
                                     <td className="text-center text-gray-400">{c.clientName}</td>
                                     <td className="text-center">{c.residency}</td>
                                     <td className="flex h-full p-3 gap-2 items-center justify-center">
-                                        <button className="btn btn-warning active:scale-50" onClick={makeAddModalAppear}><i class="fa-solid fa-user-pen text-white"></i></button>
-                                        <button className="btn btn-danger active:scale-50" onClick={() => DeleteClient(c.id)}><i class="fa-solid fa-trash-can text-white"></i></button>
+                                        <button className="btn btn-warning active:scale-50" onClick={() => makeUpdateModalAppear(c)}><i className="fa-solid fa-user-pen text-white"></i></button>
+                                        <button className="btn btn-danger active:scale-50" onClick={() => deleteClient(c.id)}><i className="fa-solid fa-trash-can text-white"></i></button>
                                     </td>
                                 </tr>
                             )
@@ -103,6 +188,8 @@ function App() {
                     </tbody>
                 </table>
             </div>
+
+            <Toaster expand={true} richColors position='bottom-right' className='mr-8'/>
         </>
     );
 }

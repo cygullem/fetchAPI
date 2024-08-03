@@ -76,31 +76,33 @@ function App() {
                 </button>
             </div>
 
-            <table className="tableCont w-full rounded-xl overflow-auto bg-slate-900">
-                <thead>
-                    <tr className="text-white">
-                        <th className="p-2 text-center">ID</th>
-                        <th className="p-2 text-center">Client Name</th>
-                        <th className="p-2 text-center">Residency</th>
-                        <th className="p-2 text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        client.map((c) =>
-                            <tr key={c.id} className="text-xl font-semibold hover:bg-slate-600">
-                                <td className="text-center">{c.id}</td>
-                                <td className="text-center text-gray-400">{c.clientName}</td>
-                                <td className="text-center">{c.residency}</td>
-                                <td className="flex h-full p-3 gap-2 items-center justify-center">
-                                    <button className="btn btn-warning active:scale-50" onClick={makeAddModalAppear}><i class="fa-solid fa-user-pen text-white"></i></button>
-                                    <button className="btn btn-danger active:scale-50" onClick={() => DeleteClient(c.id)}><i class="fa-solid fa-trash-can text-white"></i></button>
-                                </td>
-                            </tr>
-                        )
-                    }
-                </tbody>
-            </table>
+            <div className="tableContainer w-full rounded-lg">
+                <table className="tableCont w-full rounded-xl bg-slate-900">
+                    <thead>
+                        <tr className="text-white">
+                            <th className="p-2 text-center">ID</th>
+                            <th className="p-2 text-center">Client Name</th>
+                            <th className="p-2 text-center">Residency</th>
+                            <th className="p-2 text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            client.map((c) =>
+                                <tr key={c.id} className="text-xl font-semibold hover:bg-slate-600">
+                                    <td className="text-center">{c.id}</td>
+                                    <td className="text-center text-gray-400">{c.clientName}</td>
+                                    <td className="text-center">{c.residency}</td>
+                                    <td className="flex h-full p-3 gap-2 items-center justify-center">
+                                        <button className="btn btn-warning active:scale-50" onClick={makeAddModalAppear}><i class="fa-solid fa-user-pen text-white"></i></button>
+                                        <button className="btn btn-danger active:scale-50" onClick={() => DeleteClient(c.id)}><i class="fa-solid fa-trash-can text-white"></i></button>
+                                    </td>
+                                </tr>
+                            )
+                        }
+                    </tbody>
+                </table>
+            </div>
         </>
     );
 }

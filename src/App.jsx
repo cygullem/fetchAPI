@@ -1,8 +1,8 @@
 import './styles/main.css';
 import { Toaster, toast } from 'sonner';
 import React, { useState, useEffect } from "react";
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
+import ClientAddModal from './ClientAddModal'
+import UpdateClientModal from './UpdateClientModal';
 
 function App() {
     const [clients, setClients] = useState([]);
@@ -11,9 +11,9 @@ function App() {
     const [showAddModal, setShowAddModal] = useState(false);
     const [clientName, setClientName] = useState("");
     const [residency, setResidency] = useState("");
-    
+
     const [selectedClientId, setSelectedClientId] = useState(0);
-    const [selectedClient, setSelectedClient] = useState({id: 0, clientName : "", residency : ""})
+    const [selectedClient, setSelectedClient] = useState({ id: 0, clientName: "", residency: "" })
     const [showUpdateModal, setShowUpdateModal] = useState(false);
 
     const makeAddModalAppear = () => setShowAddModal(!showAddModal);
@@ -33,7 +33,7 @@ function App() {
 
     const getClient = async (id) => {
         const response = await fetch(
-            "http://localhost:5241/api/ClientApi/GetClient?id="+id
+            "http://localhost:5241/api/ClientApi/GetClient?id=" + id
         );
         const result = await response.json()
         setSelectedClient(result)
@@ -66,9 +66,9 @@ function App() {
     };
 
     const updateClient = async () => {
-       
+
         const response = await fetch(
-            "http://localhost:5241/api/ClientApi/updateclient?id="+selectedClientId,
+            "http://localhost:5241/api/ClientApi/updateclient?id=" + selectedClientId,
             {
                 method: "PUT",
                 headers: {
@@ -110,55 +110,27 @@ function App() {
         getClients();
     }, []);
 
-    if (loading) return <center><h1 className="text-3xl font-semibold">Loading...</h1></center>;
+    if (loading) return <center className='h-full w-full flex items-center justify-center'><h1 className="text-3xl font-semibold">Loading...</h1></center>;
 
     return (
         <>
-            <Modal show={showAddModal} onHide={makeAddModalAppear}>
-                <Modal.Header closeButton className='text-black font-semibold'>New Client</Modal.Header>
-                <Modal.Body>
-                    <input 
-                        className="w-full p-2 border-2 rounded-lg border-info text-black placeholder:text-black bg-transparent" 
-                        placeholder="Client Name" 
-                        type="text" 
-                        value={clientName} 
-                        onChange={(e) => setClientName(e.target.value)}
-                    />
-                    <input 
-                        className="w-full p-2 mt-2 border-2 rounded-lg border-info text-black placeholder:text-black bg-transparent" 
-                        placeholder="Residency" 
-                        type="text" 
-                        value={residency} 
-                        onChange={(e) => setResidency(e.target.value)}
-                    />
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button className='active:scale-50 btn btn-success' onClick={saveClient}>Save client</Button>
-                </Modal.Footer>
-            </Modal>
+            <ClientAddModal
+                showAddModal={showAddModal}
+                makeAddModalAppear={makeAddModalAppear}
+                clientName={clientName}
+                setClientName={setClientName}
+                residency={residency}
+                setResidency={setResidency}
+                saveClient={saveClient}
+            />
 
-            <Modal show={showUpdateModal} onHide={() => setShowUpdateModal(false)}>
-                <Modal.Header closeButton className='text-black font-semibold'>Update Client Information</Modal.Header>
-                <Modal.Body>
-                    <input 
-                        className="w-full p-2 border-2 rounded-lg border-info text-black placeholder:text-black bg-transparent" 
-                        placeholder='Client Name' 
-                        type='text' 
-                        value={selectedClient.clientName} 
-                        onChange={(e) => setSelectedClient((c)=>({...c, clientName : e.target.value}))}
-                    />
-                    <input 
-                        className="w-full p-2 mt-2 border-2 rounded-lg border-info text-black placeholder:text-black bg-transparent" 
-                        placeholder='Residency' 
-                        type='text' 
-                        value={selectedClient.residency} 
-                        onChange={(e) => setSelectedClient((c)=>({...c, residency : e.target.value}))}
-                    />
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button className='active:scale-50 btn btn-success' onClick={updateClient}>Save Update</Button>
-                </Modal.Footer>
-            </Modal>
+            <UpdateClientModal
+                showUpdateModal={showUpdateModal}
+                setShowUpdateModal={setShowUpdateModal}
+                selectedClient={selectedClient}
+                updateClient={updateClient}
+                setSelectedClient={setSelectedClient}
+            />
 
             <h1 className="text-5xl font-semibold mb-4 w-full text-center">CLIENTS</h1>
             <div className="w-full mb-4 flex justify-end">
@@ -186,7 +158,7 @@ function App() {
                                     <td className="text-center text-gray-400">{c.clientName}</td>
                                     <td className="text-center">{c.residency}</td>
                                     <td className="flex h-full p-3 gap-2 items-center justify-center">
-                                        <button className="btn btn-warning active:scale-50" onClick={()=> {getClient(c.id); setSelectedClientId(c.id)}}><i className="fa-solid fa-user-pen text-white"></i></button>
+                                        <button className="btn btn-warning active:scale-50" onClick={() => { getClient(c.id); setSelectedClientId(c.id) }}><i className="fa-solid fa-user-pen text-white"></i></button>
                                         <button className="btn btn-danger active:scale-50" onClick={() => deleteClient(c.id)}><i className="fa-solid fa-trash-can text-white"></i></button>
                                     </td>
                                 </tr>
@@ -196,7 +168,7 @@ function App() {
                 </table>
             </div>
 
-            <Toaster expand={true} richColors position='bottom-right' className='mr-8'/>
+            <Toaster expand={true} richColors position='bottom-right' className='mr-8' />
         </>
     );
 }

@@ -8,8 +8,3 @@
     box-sizing: border-box;
     font-family: 'Rubik', sans-serif;
 }
-
-.tableContainer{
-    max-height: 62vh;
-    overflow: auto;
-}

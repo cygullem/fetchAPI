@@ -5,7 +5,7 @@ import App from "./App";
 const AppRoutes = () => {
     return (
         <Routes>
-            <Route path="/" element={<App   />}/>
+            <Route path="/" element={<App />}/>
             <Route path="/client/:clientId" element={<ViewClient />} />
         </Routes>
     );

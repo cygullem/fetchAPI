@@ -3,6 +3,7 @@ import { Toaster, toast } from 'sonner';
 import React, { useState, useEffect } from "react";
 import ClientAddModal from './ClientAddModal'
 import UpdateClientModal from './UpdateClientModal';
+import { NavLink } from 'react-router-dom';
 
 function App() {
     const [clients, setClients] = useState([]);
@@ -158,6 +159,7 @@ function App() {
                                     <td className="text-center text-gray-400">{c.clientName}</td>
                                     <td className="text-center">{c.residency}</td>
                                     <td className="flex h-full p-3 gap-2 items-center justify-center">
+                                        <NavLink to={"/client/"+c.id} className={"btn btn-success active:scale-50"}><i className="fa-solid fa-eye text-white"></i></NavLink>
                                         <button className="btn btn-warning active:scale-50" onClick={() => { getClient(c.id); setSelectedClientId(c.id) }}><i className="fa-solid fa-user-pen text-white"></i></button>
                                         <button className="btn btn-danger active:scale-50" onClick={() => deleteClient(c.id)}><i className="fa-solid fa-trash-can text-white"></i></button>
                                     </td>

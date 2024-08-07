@@ -1,12 +1,12 @@
-import { Modal, Button } from 'react-bootstrap';
+import { Modal, Button, ToastContainer } from 'react-bootstrap';
 
 
 const ClientAddModal = ({
     showAddModal,
     makeAddModalAppear,
     clientName,
-    setClientName,
     residency,
+    setClientName,
     setResidency,
     saveClient,
 }) => {
@@ -15,18 +15,18 @@ const ClientAddModal = ({
             <Modal show={showAddModal} onHide={makeAddModalAppear}>
                 <Modal.Header closeButton className='text-black font-semibold'>New Client</Modal.Header>
                 <Modal.Body>
-                    <input 
-                        className="w-full p-2 border-2 rounded-lg border-info text-black placeholder:text-black bg-transparent" 
-                        placeholder="Client Name" 
-                        type="text" 
-                        value={clientName} 
+                    <input
+                        className="w-full p-2 border-2 rounded-lg border-info text-black placeholder:text-black bg-transparent"
+                        placeholder="Client Name"
+                        type="text"
+                        value={clientName}
                         onChange={(e) => setClientName(e.target.value)}
                     />
-                    <input 
-                        className="w-full p-2 mt-2 border-2 rounded-lg border-info text-black placeholder:text-black bg-transparent" 
-                        placeholder="Residency" 
-                        type="text" 
-                        value={residency} 
+                    <input
+                        className="w-full p-2 mt-2 border-2 rounded-lg border-info text-black placeholder:text-black bg-transparent"
+                        placeholder="Residency"
+                        type="text"
+                        value={residency}
                         onChange={(e) => setResidency(e.target.value)}
                     />
                 </Modal.Body>
@@ -37,5 +37,5 @@ const ClientAddModal = ({
         </>
     );
 }
- 
+
 export default ClientAddModal;
